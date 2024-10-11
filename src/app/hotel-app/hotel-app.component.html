@@ -1,0 +1,140 @@
+<div class="form-style">
+  <h1>Enter Hotel Data </h1>
+  <form [formGroup]="HotelForm" (ngSubmit)="onSubmit()">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+
+    <div>
+    <label for="hotelName">Hotel Name:</label>
+    <input id="hotelName" type="text" pInputText formControlName="HotelName" class="p-inputtext p-component ml-2" />
+    </div>
+  
+      <div formArrayName="hotelImages" style="display: flex; gap: 5px;">
+        <div *ngFor="let image of hotelImages.controls; let i = index" class="p-col-12 p-md-4">
+          <img [src]="image.value" alt="img {{ i + 1 }}" class="image-preview" style="width: 100px;">
+        </div>
+      </div>
+  </div>
+
+    <br><br>
+    <label for="discription"> Description</label>
+    <br>
+    <textarea formControlName="description" rows="5" cols="95" pInputTextarea></textarea>
+    <br><br>
+    <div style="display: flex; align-items: center;">
+      <div style="margin-right: 10px;">
+        <label for="upload" class="p-label hotelLabel">Upload Images</label>
+        <input id="upload" type="file" pFileUpload (change)="hotelImageS($event)" multiple style="display: none;">
+      </div>
+      <div>
+        <button pButton type="button" icon="pi pi-plus" (click)="addCategory()" label="Add Category"></button>
+      </div>
+    </div>
+    <br>
+    
+    <br>
+    <br><br>
+    <div class="p-grid" formArrayName="categories">
+      <div *ngFor="let category of categories.controls; let i = index" [formGroupName]="i"
+        class="p-col-12 p-md-6 p-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+
+          <div>
+            <label for="catName">Name:</label>
+            <input id="catName" type="text" pInputText formControlName="catName" class="p-inputtext p-component ml-2"/>
+          </div>
+
+          <div *ngIf="getCatImage(i).value">
+            <img [src]="getCatImage(i).value" alt="img {{ i + 1 }}" class="image-preview">
+          </div>
+
+        </div>
+
+        <br><br>
+        <label for="catDescription">Description</label><br>
+        <textarea formControlName="catDescription" rows="5" cols="81" pInputTextarea></textarea>
+        <br><br>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <label for="catImageUpload-{{i}}" class="hotelLabel ">Upload Image</label>
+            <input id="catImageUpload-{{i}}" type="file" (change)="categoryImage($event, i)"
+              style="display: none;">
+          </div>
+          <div>
+            <button pButton type="button" icon="pi pi-plus" (click)="addItems(i)" label="Add Items"></button>
+          </div>
+          <div>
+            <button pButton type="button" icon="pi pi-times" (click)="removeCategory(i)" label="Remove Category"
+              class="p-button-danger"></button>
+          </div>
+        </div>
+        <br>
+        <div class="p-grid" formArrayName="items">
+          <div *ngFor="let item of getItems(i).controls; let j = index" [formGroupName]="j" class="p-col-12 p-md-6 mb-3"
+            style="display: flex;justify-content: space-between;">
+            <div>
+              <input id="itemName" type="text" pInputText formControlName="itemName" class="p-inputtext p-component"
+                placeholder="Item Name" />
+            </div>
+            <div>
+              <input id="itemPrice" type="number" pInputText formControlName="itemPrice" class="p-inputtext p-component"
+                placeholder="Item Price" />
+            </div>
+            <div>
+              <button pButton type="button" icon="pi pi-times" (click)="removeItem(i, j)" label="Remove Item"
+                class="p-button-danger"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <button pButton type="submit" label="Submit" class="p-button-success max-w-12rem"></button>
+  </form>
+</div>
+
+<div *ngIf="formOutput" class="submission-display">
+  <div class="hotel-data">
+    <h2>{{ formOutput.HotelName }}</h2>
+  </div>
+  <div class=" hotel-data">
+    <p>{{ formOutput.description }}</p>
+  </div>
+  <div class="p-grid hotel-data" style="display: flex; flex-wrap: wrap; gap: 15px;">
+    <div *ngFor="let img of formOutput.hotelImages">
+      <img [src]="img" alt="img" style="width: 250px; height: 200px; border-radius: 10px;">
+    </div>
+  </div>
+
+  <div *ngFor="let category of formOutput.categories; let i = index" class="category-display">
+
+    <div style="display: flex; justify-content: space-between;">
+
+      <div>
+        <h2 class="mb-5">{{ category.catName }}</h2>
+        <p>{{ category.catDescription }}</p>
+      </div>
+
+      <div *ngIf="category.catImage">
+        <img [src]="category.catImage" alt="img" class="image-preview" style="width:300px;">
+      </div>
+
+    </div>
+
+    <div *ngIf="category.items.length > 0 " class="mt-2">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of category.items; let j = index">
+            <td>{{ item.itemName }}</td>
+            <td>{{ item.itemPrice }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
